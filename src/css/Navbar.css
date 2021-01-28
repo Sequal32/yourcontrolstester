@@ -1,0 +1,40 @@
+
+.main-div {
+    position: relative;
+    border-radius: 5px;
+    width: 100%;
+    height: 100%;
+    background: white;
+}
+
+.selection {
+    position: absolute;
+    border-radius: 5px;
+    height: 100%;
+    background: #01BFE6;
+    transition: left 0.5s;
+}
+
+.white-text {
+    color: white;
+}
+
+.black-text {
+    color: black;
+}
+
+.page-list {
+    position: absolute;
+    display: flex;
+    justify-content: space-evenly;
+    width: 100%;
+    height: 100%;
+}
+
+.grid-text {
+    position: relative;
+    margin: auto;
+    font-size: 1.1vw;
+    cursor: pointer;
+    transition: color 0.5s;
+}
