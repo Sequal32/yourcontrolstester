@@ -41,10 +41,6 @@
     filter: invert(67%) sepia(41%) saturate(5246%) hue-rotate(149deg) brightness(98%) contrast(99%);
 }
 
-.search-text {
-    
-}
-
 .image-inside-div {
     position: absolute;
     top: 0;
@@ -53,12 +49,6 @@
     right: 0;
     margin: auto;
     width: 50%;
-}
-
-.definitions-list {
-    position: relative;
-    display: flex;
-    flex-direction: row;
 }
 
 .definition-card {

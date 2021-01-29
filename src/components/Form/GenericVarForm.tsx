@@ -62,6 +62,7 @@ export class GenericVarForm<T extends GenericVarFormState> extends React.Compone
     }
 
     calculatorOnRender() {
+        // TODO: find some other method to inject calculator into a setState call
         if (!this.state.calculatorManuallyChanged) {
             this.state.calculator = this.compileCalculatorCode()
         } else {

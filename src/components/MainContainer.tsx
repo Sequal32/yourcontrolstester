@@ -1,13 +1,26 @@
 import React from 'react';
-import Navbar from './Navbar'
-import WatchForm from './Form/WatchForm'
-import SetForm from './Form/SetForm'
+
 import DefinitionsHandler from './Definitions/DefinitionsHandler'
+import Navbar from './Navbar'
+import SetForm from './Form/SetForm'
+import WatcherHandler from './Watcher/WatcherHandler'
+import WatchForm from './Form/WatchForm'
 
 import '../css/MainContainer.css'
+import '../css/Shared.css'
 
-class MainContainer extends React.Component {
+type State = {
+    sideBarSelectedWatcher: boolean
+}
+
+class MainContainer extends React.Component<{}, State> {
+    state = {
+        sideBarSelectedWatcher: false
+    }
+
     render() {
+        const {sideBarSelectedWatcher} = this.state
+
         return (
             <div>
                 <div className="left">
@@ -21,8 +34,14 @@ class MainContainer extends React.Component {
                 </div>
                 <div className="vertical-divider"/>
                 <div className="right">
-                    <h2>Definitions</h2>
-                    <DefinitionsHandler/>
+                    <h2>
+                        {sideBarSelectedWatcher ? "Watcher" : "Definitions"}
+                        <button className="form-button rounded shadow page-change-button"onClick={() => this.setState({sideBarSelectedWatcher: !sideBarSelectedWatcher})}>
+                            {sideBarSelectedWatcher ? "Definitions" : "Watcher"}
+                        </button>
+                    </h2>
+                    
+                    {sideBarSelectedWatcher ? <WatcherHandler input={[]}/> : <DefinitionsHandler/>}
                 </div>
             </div>
         )

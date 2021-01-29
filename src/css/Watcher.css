@@ -1,0 +1,29 @@
+.watcher-big-text {
+    margin: 0;
+    font-size: 1vw;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.watcher-small-text {
+    margin: 0;
+    color: grey;
+    font-size: 1vw;
+}
+
+.trash-image {
+    filter: invert(21%) sepia(99%) saturate(5361%) hue-rotate(355deg) brightness(114%) contrast(131%);
+}
+
+.image-inside-div-bottom {
+    position: absolute;
+    bottom: 10%;
+    left: 0;
+    right: 0;
+    margin: auto;
+    width: 50%;
+}
+
+.watcher-text-div {
+    margin: 10px 0px 10px 3%;
+}

@@ -37,6 +37,14 @@
   border-right: 2px solid rgba(128, 128, 128, 0.1);
 }
 
+.page-change-button {
+  width: 40%;
+  font-weight: normal;
+  font-size: 1.5vw;
+  float: right;
+  display: inline;
+}
+
 * {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }

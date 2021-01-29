@@ -1,4 +1,4 @@
-import React from 'react';
+import { Component, Fragment } from 'react';
 
 import DefinitionSearch from "./DefinitionSearch"
 import DefinitionBrowse from "./DefinitionBrowse"
@@ -6,16 +6,14 @@ import DefinitionList from "./DefinitionList"
 
 import "../../css/Definitions.css"
 
-class DefinitionsHandler extends React.Component {
+export default class DefinitionsHandler extends Component {
     render() {
         return (
-            <div>
+            <Fragment>
                 <DefinitionBrowse/>
                 <DefinitionSearch/>
                 <DefinitionList/>
-            </div>
+            </Fragment>
         )
     }
 }
-
-export default DefinitionsHandler;

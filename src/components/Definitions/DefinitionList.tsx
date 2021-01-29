@@ -7,7 +7,7 @@ import '../../css/Shared.css'
 class DefinitionList extends React.Component {
     render() {
         return (
-            <div className="definitions-list">
+            <div className="vertical-list">
                 <DefinitionCard bigText="A:PLANE ALTITUDE" smallText="NumSet" circles={["master", "shared", "unreliable", "interpolate"]}/>
             </div>
         )

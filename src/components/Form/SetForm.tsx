@@ -2,6 +2,7 @@ import React from 'react';
 import FormField from './FormField'
 import '../../css/Shared.css'
 import {GenericVarForm, GenericVarFormState} from './GenericVarForm';
+import {invoke} from 'tauri/api/tauri';
 
 class SetFormState extends GenericVarFormState {
     param: string = "";
@@ -42,6 +43,18 @@ class SetForm extends GenericVarForm<SetFormState> {
 
         return code
     }
+
+    handleSubmit() {
+        invoke({
+            cmd: "setVar",
+            data: {
+                name: this.state.name,
+                units: this.state.units,
+                param: this.state.param,
+                value: this.state.value
+            }
+        })
+    }
     
     render() {
         super.render();
@@ -52,7 +65,7 @@ class SetForm extends GenericVarForm<SetFormState> {
                 <FormField id="param" type="text" label="Param" onChange={this.paramChange.bind(this)}/>
                 <FormField id="value" type="text" label="Value" onChange={this.valueChange.bind(this)}/>
                 <FormField id="calculator" type="text" label="Calculator Code" widthPercent={100} overrideValue={this.state.calculator} onChange={this.calculatorChange.bind(this)}/>
-                <button className="form-button rounded shadow">Set</button>
+                <button className="form-button rounded shadow" onClick={this.handleSubmit.bind(this)}>Set</button>
             </div>
         )
     }
