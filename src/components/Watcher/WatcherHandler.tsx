@@ -6,11 +6,14 @@ import "../../css/Definitions.css"
 import "../../css/Shared.css"
 import "../../css/Watcher.css"
 
-import {promisified} from 'tauri/api/tauri'
+import {invoke} from 'tauri/api/tauri'
 import {Event, listen} from 'tauri/api/event'
 
+export type InputVars = Array<{calculator: string, friendlyName: string}>;
+
 type Props = {
-    input: Array<{calculator: string, friendlyName: string}>
+    input: InputVars,
+    hidden?: boolean
 }
 
 type State = {
@@ -18,8 +21,11 @@ type State = {
 }
 
 type VarData = {
-    id: number,
-    value: number
+    var_name: string,
+    data: {
+        integer: number,
+        floating: number
+    }
 }
 
 export default class WatcherHandler extends Component<Props, State> {
@@ -28,42 +34,45 @@ export default class WatcherHandler extends Component<Props, State> {
     }
 
     mappedCalculators = new Set<string>();
-    ignoredIds = new Set<number>();
+    ignoredVars = new Set<string>();
 
-    idMap: {[id: number]: string} = {};
-    idCounter = 0;
-
-    onDeleteCard(cardId: number) {
+    onDeleteCard(varName: string) {
         // TODO: change when gauge is rewritten
-        this.ignoredIds.add(cardId)
+        this.ignoredVars.add(varName)
+        this.filterAndSetData(this.state.values)
+    }
+
+    filterAndSetData(data: Array<VarData>) {
+        this.setState({
+            values: data.filter(({var_name: varName}) => !this.ignoredVars.has(varName))
+        })
     }
 
     componentDidMount() {
-        listen("varUpdate", (data: Event<[VarData]>) => {
-            
-            data.payload.filter(({id}) => !this.ignoredIds.has(id))
+        listen("update", (data: Event<Array<VarData>>) => {
 
-            this.setState({values: data.payload})
+            this.filterAndSetData(data.payload)
 
         })
     }
 
-    componentDidUpdate(props: Props, state: State) {
-        props.input.forEach((data) => {
+    componentDidUpdate(prevProps: Props, prevState: State) {
+        this.props.input.forEach((data) => {
+            // Ignored so bring back, but don't add 
+            if (this.ignoredVars.has(data.calculator)) {
+                this.ignoredVars.delete(data.calculator)
+                return
+            }
 
             if (this.mappedCalculators.has(data.calculator)) {return}
             this.mappedCalculators.add(data.calculator)
 
-            promisified<number>({
-
-                "cmd": "watchVar",
-                "calculator": data.friendlyName,
-                "id": this.idCounter++
-
-            }).then((mappedId) => {
-
-                this.idMap[mappedId] = data.friendlyName
-
+            invoke({
+                cmd: "watchVar",
+                data: {
+                    calculator: data.calculator,
+                    name: data.friendlyName
+                }
             })
         })
     }
@@ -75,9 +84,15 @@ export default class WatcherHandler extends Component<Props, State> {
                 <DefinitionSearch/>
 
                 <div className="vertical-list">
-                    {this.state.values.map(({value, id}) => 
-                        <WatcherCard bigText={this.idMap[id]} smallText={value} onDelete={this.onDeleteCard.bind(this, id)}/>
-                    )}
+                    {
+                        this.state.values.map(({var_name: varName, data}) => 
+                            <WatcherCard 
+                            bigText={varName} 
+                            smallText={data.floating} 
+                            onDelete={this.onDeleteCard.bind(this, varName)}
+                            />
+                        )
+                    }
                 </div>
 
             </Fragment>

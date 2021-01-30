@@ -1,32 +1,63 @@
+use std::{thread::sleep, time::Duration};
+
+use gaugecommunicator::LVarResult;
+use simconnect::{SimConnector, DispatchResult};
+
 // #![cfg_attr(
 //     all(not(debug_assertions), target_os = "windows"),
 //     windows_subsystem = "windows"
 // )]
 
 mod cmd;
+mod gaugecommunicator;
+mod memwriter;
+mod ui;
 
 fn main() {
-    tauri::AppBuilder::new()
-    .invoke_handler(|_webview, arg| {
-        use cmd::Cmd::*;
-        match serde_json::from_str(arg) {
-            Err(e) => {
-                Err(e.to_string())
+    // Two main handlers: UI & SimConnect
+    let mut conn = SimConnector::new();
+    let mut gauge_communicator = gaugecommunicator::GaugeCommunicator::new();
+    let ui = ui::Ui::run();
+
+    conn.connect("YourControls Definitions");
+    gauge_communicator.on_connected(&conn);
+
+    loop {
+
+        match ui.get_next_message() {
+            Some(cmd::Cmd::SetVar {calculator}) => {
+
+                gauge_communicator.send_raw(&mut conn, &calculator);
+
             }
-            Ok(command) => {
-                match command {
-                    // definitions for your custom commands from Cmd here
-                    SetVar {calculator} => {
-                        println!("{}", calculator)
-                    }
-                    WatchVar {calculator} => {
-                        
-                    }
-                }
-                Ok(())
+            Some(cmd::Cmd::WatchVar {name, calculator}) => {
+
+                gauge_communicator.add_definition_raw(&conn, &calculator, &name);
+
             }
+            None => {}
         }
-    })
-    .build()
-    .run();
+
+        match conn.get_next_message() {
+            Ok(DispatchResult::ClientData(data)) => {
+
+                match gauge_communicator.process_client_data(&conn, data) {
+                    Some(LVarResult::Multi(data)) => {
+
+                        ui.send_var_data(data);
+
+                    }
+                    _ => {}
+                };
+
+            }
+            _ => {}
+        }
+
+        if ui.stopped() {
+            return
+        }
+
+        sleep(Duration::from_millis(10))
+    }
 }

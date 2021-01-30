@@ -19,6 +19,7 @@
 
 .right h2 {
   color: #494949;
+  position: relative;
 }
 
 .horizontal-divider {
@@ -38,10 +39,11 @@
 }
 
 .page-change-button {
-  width: 40%;
+  width: 30%;
   font-weight: normal;
-  font-size: 1.5vw;
-  float: right;
+  font-size: 15px;
+  position: absolute;
+  top: 0; bottom: 0; right: 0;
   display: inline;
 }
 

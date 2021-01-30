@@ -2,12 +2,15 @@ import React from "react";
 
 export class GenericVarFormState {
     name: string = "";
-    units: string = "";
+    units: string | null = null;
     calculator: string = "";
-    calculatorManuallyChanged: boolean = false;
 }
 
-export class GenericVarForm<T extends GenericVarFormState> extends React.Component<{}, T> {
+type Props = {
+    onSubmit?: (friendlyName: string, calculator: string) => void
+}
+
+export class GenericVarForm<T extends GenericVarFormState> extends React.Component<Props, T> {
     state = new GenericVarFormState() as T;
 
     isKey(): boolean {
@@ -27,51 +30,48 @@ export class GenericVarForm<T extends GenericVarFormState> extends React.Compone
         const value = e.target.value;
         const name = !value.match(/\w:/) ? "A:" + value : value
 
-        this.setState({
-            name: name,
-        })
+        this.setCalculator({name})
     }
 
     unitsChange(e: React.ChangeEvent<HTMLInputElement>) {
-        this.setState({
-            units: e.target.value,
-        })
+        const units = e.target.value == "" ? undefined : e.target.value;
+        this.setCalculator({units})
     }
 
-    compileCalculatorCode(): string {
+    setCalculator(newStateChange: {name?: string, units?: string}) {
         let code = ""
+
+        const name = newStateChange.name ?? this.state.name
+        const units = newStateChange.units ?? this.state.units
 
         if (this.isKey() || this.isLocal()) {
 
-            code = `(${this.state.name})`
+            code = `(${name ?? ""})`
 
         } else {
 
-            code = `(${this.state.name}, ${this.state.units})`
+            code = `(${name ?? ""}, ${units ?? ""})`
 
         }
 
-        return code
+        this.setState({
+            calculator: code,
+            name, units
+        })
     }
 
     calculatorChange(e: React.ChangeEvent<HTMLInputElement>) {
         this.setState({
-            calculator: e.target.value,
-            calculatorManuallyChanged: true
+            calculator: e.target.value
         })
     }
 
-    calculatorOnRender() {
-        // TODO: find some other method to inject calculator into a setState call
-        if (!this.state.calculatorManuallyChanged) {
-            this.state.calculator = this.compileCalculatorCode()
-        } else {
-            this.state.calculatorManuallyChanged = false
-        }
-    }
+    onSubmit() {
+        if (!this.props.onSubmit) {return}
 
-    render() {
-        this.calculatorOnRender();
-        return <div/>;
+        this.props.onSubmit(
+            this.state.name.replace("/\w:/", ""),
+            this.state.calculator
+        )
     }
 }

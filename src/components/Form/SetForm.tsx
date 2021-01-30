@@ -5,59 +5,66 @@ import {GenericVarForm, GenericVarFormState} from './GenericVarForm';
 import {invoke} from 'tauri/api/tauri';
 
 class SetFormState extends GenericVarFormState {
-    param: string = "";
-    value: string = "";
+    param: string | null = null;
+    value: string | null = null;
 }
 
 class SetForm extends GenericVarForm<SetFormState> {
     state: SetFormState = new SetFormState()
 
     paramChange(e: React.ChangeEvent<HTMLInputElement>) {
-        this.setState({
-            param: e.target.value,
-        })
+        const param = e.target.value == "" ? undefined : e.target.value
+        this.setCalculator({param})
     }
 
     valueChange(e: React.ChangeEvent<HTMLInputElement>) {
-        this.setState({
-            value: e.target.value,
-        })
+        const value = e.target.value == "" ? undefined : e.target.value
+        this.setCalculator({value})
     }
 
-    compileCalculatorCode(): string {
+    setCalculator(newStateChange: {name?: string, units?: string, param?: string, value?: string}) {
         let code = ""
+
+        const name = newStateChange.name ?? this.state.name
+        const units = newStateChange.units ?? this.state.units
+        const param = newStateChange.param ?? this.state.param
+        const value = newStateChange.value ?? this.state.value
+
+        const nameString = name ?? ""
+        const unitsString = value ?? ""
+        const paramString = param ? param + " " : ""
+        const valueString = value ? value + " " : ""
 
         if (this.isKey() || this.isLocal()) {
 
-            code = `${this.state.param} ${this.state.value} (>${this.state.name})`
+            code = `${paramString}${valueString}(>${nameString})`
 
         } else if (this.isAircraft()) {
 
-            code = `${this.state.param} ${this.state.value} (>${this.state.name}, ${this.state.units})`
+            code = `${paramString}${valueString}(>${nameString}, ${unitsString})`
 
         } else {
             // Name not defined yet
-            code = `${this.state.value} (>, ${this.state.units})`
+            code = `${valueString}(>, ${unitsString})`
 
         }
 
-        return code
+        this.setState({
+            calculator: code,
+            name, units, param, value
+        })
     }
 
     handleSubmit() {
         invoke({
             cmd: "setVar",
             data: {
-                name: this.state.name,
-                units: this.state.units,
-                param: this.state.param,
-                value: this.state.value
+                calculator: this.state.calculator
             }
         })
     }
     
     render() {
-        super.render();
         return (
             <div className="form">
                 <FormField id="single" type="text" label="Name" onChange={this.nameChange.bind(this)}/>

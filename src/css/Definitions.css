@@ -53,6 +53,7 @@
 
 .definition-card {
     width: 100%;
+    position: relative;
 }
 
 .definition-text-div {
