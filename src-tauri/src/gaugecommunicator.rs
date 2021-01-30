@@ -325,4 +325,10 @@ impl GaugeCommunicator {
         // Write some data
         self.write_interpolate_mapping(conn);
     }
+
+    pub fn clear(&mut self) {
+        self.datums.clear();
+        self.next_request_id = 0;
+        self.requests.clear();
+    }
 }

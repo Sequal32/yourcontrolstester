@@ -1,4 +1,5 @@
 import React from "react";
+import { Definition } from "../Definitions/YamlParser";
 
 export class GenericVarFormState {
     name: string = "";
@@ -6,36 +7,35 @@ export class GenericVarFormState {
     calculator: string = "";
 }
 
-type Props = {
-    onSubmit?: (friendlyName: string, calculator: string) => void
+export type Props = {
+    onSubmit?: (friendlyName: string, calculator: string) => void,
+    definitionOverride?: Definition
 }
 
 export class GenericVarForm<T extends GenericVarFormState> extends React.Component<Props, T> {
     state = new GenericVarFormState() as T;
 
-    isKey(): boolean {
-        return this.state.name.startsWith("K:") || this.state.name.startsWith("H:")
+    isKey(targetString?: string): boolean {
+        targetString = targetString ?? this.state.name
+        return targetString.startsWith("K:") || targetString.startsWith("H:")
     }
 
-    isLocal(): boolean {
-        return this.state.name.startsWith("L:")
+    isLocal(targetString?: string): boolean {
+        targetString = targetString ?? this.state.name
+        return targetString.startsWith("L:")
     }
 
-    isAircraft(): boolean {
-        return this.state.name.startsWith("A:")
+    isAircraft(targetString?: string): boolean {
+        targetString = targetString ?? this.state.name
+        return targetString.startsWith("A:")
     }
 
     nameChange(e: React.ChangeEvent<HTMLInputElement>) {
-        // Assume it's an aircraft var if not explicity defined
-        const value = e.target.value;
-        const name = !value.match(/\w:/) ? "A:" + value : value
-
-        this.setCalculator({name})
+        this.setCalculator({name: e.target.value})
     }
 
     unitsChange(e: React.ChangeEvent<HTMLInputElement>) {
-        const units = e.target.value == "" ? undefined : e.target.value;
-        this.setCalculator({units})
+        this.setCalculator({units: e.target.value})
     }
 
     setCalculator(newStateChange: {name?: string, units?: string}) {
@@ -44,13 +44,16 @@ export class GenericVarForm<T extends GenericVarFormState> extends React.Compone
         const name = newStateChange.name ?? this.state.name
         const units = newStateChange.units ?? this.state.units
 
-        if (this.isKey() || this.isLocal()) {
+        if (this.isKey(name) || this.isLocal(name)) {
 
             code = `(${name ?? ""})`
 
         } else {
 
-            code = `(${name ?? ""}, ${units ?? ""})`
+            // Default to A:
+            const prefixedName = !name.match(/\w:/) ? "A:" + name : name
+
+            code = `(${prefixedName ?? ""}, ${units ?? ""})`
 
         }
 

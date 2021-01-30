@@ -5,7 +5,8 @@ import '../../css/Definitions.css'
 type Props = {
     bigText: string,
     smallText: string,
-    circles?: Array<string>
+    circles?: Array<string>,
+    onClick?: () => void
 }
 
 type State = {
@@ -24,7 +25,7 @@ class DefinitionCard extends React.Component<Props, State> {
     render() {
         return (
             <div className="rounded definition-card shadow">
-                <div className="definition-text-div">
+                <div className="definition-text-div" onClick={this.props.onClick}>
                     <h2 className="definition-big-text">{this.props.bigText}</h2>
                     <p className="definition-small-text">{this.props.smallText}</p>
                 </div>

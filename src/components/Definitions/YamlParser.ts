@@ -15,10 +15,11 @@ type TopLevelYaml = {
     init?: [Definition]
 }
 
-type Definition = {
+export type Definition = {
     type: string,
     var_name?: string,
     var_units?: string,
+    event_param?: string,
     event_name?: string,
     // Calculator
     get?: string,
@@ -29,10 +30,7 @@ type Definition = {
 
 export type ResultDefinition = {
     category: Category,
-    name: string,
-    definitionType: string,
-    interpolate: boolean,
-    unreliable: boolean
+    definition: Definition
 }
 
 export default class YamlParser {
@@ -57,15 +55,9 @@ export default class YamlParser {
     }
 
     private addDefinition(category: Category, definition: Definition) {
-        const name = definition.var_name ?? definition.get
-
-        if (!name) {return}
-
         this.definitions.push({
-            category, name,
-            definitionType: definition.type,
-            interpolate: definition.interpolate != undefined,
-            unreliable: definition.unreliable ?? false
+            category,
+            definition
         })
     }
 

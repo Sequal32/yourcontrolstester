@@ -1,7 +1,7 @@
 use std::{thread::sleep, time::Duration};
 
 use cmd::Cmd;
-use gaugecommunicator::LVarResult;
+use gaugecommunicator::{GetResult, LVar, LVarResult};
 use simconnect::{SimConnector, DispatchResult};
 
 // #![cfg_attr(
@@ -40,6 +40,7 @@ fn main() {
 
                 conn.close();
                 conn.connect("YourControls Definitions");
+                gauge_communicator.clear();
                 gauge_communicator.on_connected(&conn);
 
             }

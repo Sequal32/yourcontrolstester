@@ -32,6 +32,10 @@
     outline: none;
 }
 
+.form-button:active {
+    box-shadow: none;
+}
+
 .vertical-list {
     position: relative;
     display: flex;
