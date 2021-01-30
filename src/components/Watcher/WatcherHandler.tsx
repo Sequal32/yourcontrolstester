@@ -8,6 +8,7 @@ import "../../css/Watcher.css"
 
 import {invoke} from 'tauri/api/tauri'
 import {Event, listen} from 'tauri/api/event'
+import Fuse from 'fuse.js'
 
 export type InputVars = Array<{calculator: string, friendlyName: string}>;
 
@@ -29,6 +30,8 @@ type VarData = {
     }
 }
 
+const SEARCH_STRING_THRESHOLD = 0.5
+
 export default class WatcherHandler extends Component<Props, State> {
     state: State = {
         values: [],
@@ -37,22 +40,36 @@ export default class WatcherHandler extends Component<Props, State> {
     mappedCalculators = new Set<string>();
     ignoredVars = new Set<string>();
 
+    currentSearchString: string | undefined = undefined
+    lastReceivedValues: Array<VarData> = []
+
     onDeleteCard(varName: string) {
         // TODO: change when gauge is rewritten
         this.ignoredVars.add(varName)
-        this.filterAndSetData(this.state.values)
+        this.filterAndSetData()
     }
 
-    filterAndSetData(data: Array<VarData>) {
+    filterAndSetData() {
+        let filteredData = this.lastReceivedValues.filter(({var_name: varName}) => !this.ignoredVars.has(varName)    )
+
+        if (this.currentSearchString) {
+            const search = new Fuse(filteredData, {keys: ["var_name"], includeScore: true})
+
+            filteredData = search.search(this.currentSearchString)
+                .filter((value) => value.score! <= SEARCH_STRING_THRESHOLD)
+                .map((value) => value.item)
+        }
+
         this.setState({
-            values: data.filter(({var_name: varName}) => !this.ignoredVars.has(varName))
+            values: filteredData
         })
     }
 
     componentDidMount() {
         listen("update", (data: Event<Array<VarData>>) => {
 
-            this.filterAndSetData(data.payload)
+            this.lastReceivedValues = data.payload
+            this.filterAndSetData()
 
         })
     }
@@ -85,9 +102,16 @@ export default class WatcherHandler extends Component<Props, State> {
 
         if (this.props.onReset) {this.props.onReset()}
 
+        this.ignoredVars.clear()
+
         this.setState({
             values: []
         })
+    }
+
+    onSearch(searchString: string | undefined) {
+        this.currentSearchString = searchString
+        this.filterAndSetData()
     }
 
     render() {
@@ -95,7 +119,7 @@ export default class WatcherHandler extends Component<Props, State> {
             <Fragment>
 
                 <button className="form-button rounded shadow watcher-reset-button" onClick={this.resetVars.bind(this)}>Reset Vars</button>
-                <DefinitionSearch/>
+                <DefinitionSearch onSearch={this.onSearch.bind(this)}/>
 
                 <div className="vertical-list">
                     {

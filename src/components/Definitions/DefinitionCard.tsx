@@ -16,7 +16,8 @@ const circleColors: {[name: string]: string} = {
     interpolate: "purple",
     unreliable: "red",
     master: "cyan",
-    shared: "green"
+    shared: "green",
+    init: "pink"
 }
 
 class DefinitionCard extends React.Component<Props, State> {

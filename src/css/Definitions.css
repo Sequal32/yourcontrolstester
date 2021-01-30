@@ -8,8 +8,14 @@
 .browse-text {
     position: relative;
     margin: 0 10px 0 10px;
-    font-size: 1.4vw;
+    font-size: 1vw;
+    height: 100%;
+    width: 90%;
     border: 0;
+    white-space: nowrap;
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .browse-div:focus-within {
@@ -63,15 +69,27 @@
 .definition-card {
     width: 100%;
     position: relative;
+    margin-bottom: 5px;
+    cursor: pointer;
+}
+
+.definition-card:hover {
+    background-color: #f0f0f0;
+}
+
+.definition-card:active {
+    box-shadow: none
 }
 
 .definition-text-div {
-    margin: 20px 0px 20px 5%;
+    margin: 10px 0px 10px 10px;
 }
 
 .definition-big-text {
     margin: 0;
-    font-size: 2vw;
+    font-size: 1vw;
+    overflow-wrap: break-word;
+    width: 85%;
 }
 
 .definition-small-text {
