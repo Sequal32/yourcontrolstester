@@ -25,7 +25,8 @@ class MainContainer extends React.Component<{}, State> {
 
     onWatchVar(friendlyName: string, calculator: string) {
         this.setState(prevState => ({
-            watchingVars: [...prevState.watchingVars, {calculator, friendlyName}]
+            watchingVars: [...prevState.watchingVars, {calculator, friendlyName}],
+            sideBarSelectedWatcher: true
         }))
     }
 
@@ -42,23 +43,27 @@ class MainContainer extends React.Component<{}, State> {
     }
 
     watchAll(definitions: Array<Definition>) {
-        const watchingVars: InputVars = definitions.map(({var_name, var_units, get}) => {
-            let calculator = ""
+        const watchingVars: InputVars = definitions
+            .map(({var_name, var_units, get}) => {
+                let calculator = ""
 
-            if (var_name) {
-                const name = !var_name.match(/\w:/) ? "A:" + var_name : var_name
-                calculator = `(${name}, ${var_units ?? ""})`
-            } else if (get) {
-                calculator = get
-            }
-            
-            return {
-                calculator,
-                friendlyName: var_name ?? get ?? ""
-            }
+                if (var_name) {
+                    const name = !var_name.match(/\w:/) ? "A:" + var_name : var_name
+                    calculator = `(${name}, ${var_units ?? ""})`
+                } else if (get) {
+                    calculator = get
+                }
+                
+                return {
+                    calculator,
+                    friendlyName: var_name ?? get ?? ""
+                }
+            })
+
+        this.setState({
+            watchingVars,
+            sideBarSelectedWatcher: true
         })
-
-        this.setState({watchingVars})
     }
 
     render() {

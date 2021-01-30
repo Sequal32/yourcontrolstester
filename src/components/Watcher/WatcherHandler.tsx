@@ -103,6 +103,7 @@ export default class WatcherHandler extends Component<Props, State> {
         if (this.props.onReset) {this.props.onReset()}
 
         this.ignoredVars.clear()
+        this.mappedCalculators.clear()
 
         this.setState({
             values: []
@@ -125,9 +126,9 @@ export default class WatcherHandler extends Component<Props, State> {
                     {
                         this.state.values.map(({var_name: varName, data}) => 
                             <WatcherCard 
-                            bigText={varName} 
-                            smallText={data.floating} 
-                            onDelete={this.onDeleteCard.bind(this, varName)}
+                                bigText={varName} 
+                                smallText={data.floating} 
+                                onDelete={this.onDeleteCard.bind(this, varName)}
                             />
                         )
                     }

@@ -25,7 +25,8 @@ export type Definition = {
     get?: string,
     set?: string,
     interpolate?: string,
-    unreliable?: boolean
+    unreliable?: boolean,
+    index_reversed?: boolean,
 }
 
 export type ResultDefinition = {

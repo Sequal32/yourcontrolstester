@@ -23,7 +23,7 @@ export default class DefinitionsHandler extends Component<Props, State> {
         definitions: []
     }
 
-    search: Fuse<ResultDefinition> = new Fuse([], {threshold: SEARCH_STRING_THRESHOLD, keys: ["definition.var_name"]})
+    search: Fuse<ResultDefinition> = new Fuse([], {threshold: SEARCH_STRING_THRESHOLD, keys: ["definition.var_name", "definition.get"]})
     originalDefinitions: Array<ResultDefinition> = []
 
     onBrowseFile(dir: string) {
@@ -51,7 +51,15 @@ export default class DefinitionsHandler extends Component<Props, State> {
         return (
             <Fragment>
                 <DefinitionBrowse onBrowse={this.onBrowseFile.bind(this)}/>
-                <button className="definitions-watch-button form-button rounded shadow" onClick={() => this.props.watchAllRequested(this.originalDefinitions.map(def => def.definition))}>Watch All</button>
+
+                <button 
+                    className="definitions-watch-button form-button rounded shadow" 
+                    onClick={() => this.props.watchAllRequested(this.originalDefinitions.map(def => def.definition))}
+                    hidden={this.state.definitions.length > 490}
+                >
+                    Watch All
+                </button>
+
                 <DefinitionSearch onSearch={this.onSearch.bind(this)}/>
 
                 <div className="vertical-list">

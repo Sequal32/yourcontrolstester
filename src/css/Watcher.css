@@ -9,6 +9,7 @@
 
 .watcher-big-text {
     margin: 0;
+    font-weight: bold;
     font-size: 1vw;
     text-overflow: ellipsis;
     overflow: hidden;

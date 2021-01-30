@@ -142,6 +142,8 @@ impl GaugeCommunicator {
     }
 
     pub fn add_definition_raw(&mut self, conn: &SimConnector, string: &str, name: &str) {
+        if self.datums.len() > 500 {return} // 500 is the max the gauge can currently handle
+
         let mut writer = MemWriter::new(128, 4).unwrap();
         writer.write_str(string);
 

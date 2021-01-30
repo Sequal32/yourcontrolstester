@@ -9,11 +9,22 @@ class WatchForm extends GenericVarForm<GenericVarFormState> {
         const newDefinition = this.props.definitionOverride
 
         if (prevProps.definitionOverride != newDefinition && newDefinition != undefined) {
-            this.setCalculator({
-                name: newDefinition.var_name,
-                units: newDefinition.var_units
-            })
-            
+            const {var_name, var_units, get} = newDefinition
+
+            if (var_name) {
+
+                this.setCalculator({
+                    name: var_name,
+                    units: var_units
+                })
+                
+            } else if (get) {
+
+                this.setState({
+                    calculator: get
+                })
+
+            }
         }
     }
 

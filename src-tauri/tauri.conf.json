@@ -1,6 +1,6 @@
 {
   "build": {
-    "distDir": "../dist",
+    "distDir": "../build",
     "devPath": "http://localhost:3000",
     "beforeDevCommand": "",
     "beforeBuildCommand": ""
@@ -44,7 +44,7 @@
     "window": {
       "title": "YourControls",
       "width": 1000,
-      "height": 600,
+      "height": 700,
       "resizable": true,
       "fullscreen": false
     },

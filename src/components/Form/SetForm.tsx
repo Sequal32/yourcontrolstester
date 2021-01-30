@@ -7,6 +7,7 @@ import {invoke} from 'tauri/api/tauri';
 class SetFormState extends GenericVarFormState {
     param: string | null = null;
     value: string | null = null;
+    indexReversed: boolean = false;
 }
 
 class SetForm extends GenericVarForm<SetFormState> {
@@ -20,18 +21,31 @@ class SetForm extends GenericVarForm<SetFormState> {
         this.setCalculator({value: e.target.value})
     }
 
-    setCalculator(newStateChange: {name?: string, units?: string, param?: string, value?: string}) {
+    indexChange(e: React.ChangeEvent<HTMLInputElement>) {
+        this.setCalculator({
+            indexReversed: e.target.checked
+        })
+    }
+
+    setCalculator(newStateChange: {name?: string, units?: string, param?: string, value?: string, indexReversed?: boolean}) {
         let code = ""
 
         const name = newStateChange.name ?? this.state.name
         const units = newStateChange.units ?? this.state.units
         const param = newStateChange.param ?? this.state.param
         const value = newStateChange.value ?? this.state.value
+        const indexReversed = newStateChange.indexReversed ?? this.state.indexReversed
 
         const nameString = name ?? ""
         const unitsString = units ?? ""
-        const paramString = param ? param + " " : ""
-        const valueString = value ? value + " " : ""
+        let paramString = param ? param + " " : ""
+        let valueString = value ? value + " " : ""
+
+        if (indexReversed) {
+            const temp = paramString
+            paramString = valueString
+            valueString = temp
+        }
 
         if (this.isKey(name) || this.isLocal(name)) {
 
@@ -48,7 +62,7 @@ class SetForm extends GenericVarForm<SetFormState> {
 
         this.setState({
             calculator: code,
-            name, units, param, value
+            name, units, param, value, indexReversed
         })
     }
 
@@ -66,18 +80,27 @@ class SetForm extends GenericVarForm<SetFormState> {
         const newDefinition = this.props.definitionOverride
 
         if (prevProps.definitionOverride != newDefinition && newDefinition != undefined) {
-            if (newDefinition.event_name) {
+            const {event_name, event_param, var_name, var_units, index_reversed, set} = newDefinition
+
+            if (event_name) {
 
                 this.setCalculator({
-                    name: "K:" + newDefinition.event_name,
-                    param: newDefinition.event_param,
+                    name: event_param ? "K:2:" + event_name : "K:" + event_name,
+                    param: event_param,
+                    indexReversed: index_reversed ?? false
                 })
 
-            } else {
+            } else if (var_name) {
 
                 this.setCalculator({
-                    name: newDefinition.var_name,
-                    units: newDefinition.var_units,
+                    name: var_name,
+                    units: var_units,
+                })
+
+            } else if (set) {
+
+                this.setState({
+                    calculator: set
                 })
 
             }
@@ -93,6 +116,12 @@ class SetForm extends GenericVarForm<SetFormState> {
                 <FormField id="param" type="text" label="Param" overrideValue={this.state.param ?? ""} onChange={this.paramChange.bind(this)} disabled={this.isAircraft()}/>
                 <FormField id="value" type="text" label="Value" overrideValue={this.state.value ?? ""} onChange={this.valueChange.bind(this)}/>
                 <FormField id="calculator" type="text" label="Calculator Code" widthPercent={100} overrideValue={this.state.calculator} onChange={this.calculatorChange.bind(this)}/>
+                <div style={{width: "100%"}}>
+                    <input type="checkbox" onChange={this.indexChange.bind(this)} checked={this.state.indexReversed}></input>
+                    <label>Index Reversed?</label>
+                </div>
+
+                
                 <button className="form-button rounded shadow" onClick={this.handleSubmit.bind(this)}>Set</button>
             </div>
         )
