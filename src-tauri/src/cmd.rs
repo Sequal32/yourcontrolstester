@@ -10,6 +10,7 @@ pub enum Cmd {
     // note that rename_all = "camelCase": you need to use "myCustomCommand" on JS
     SetVar { calculator: String },
     WatchVar { name: String, calculator: String },
+    ResetVars
 }
 
 pub enum UIEvents {

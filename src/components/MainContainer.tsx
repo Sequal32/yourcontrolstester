@@ -26,6 +26,12 @@ class MainContainer extends React.Component<{}, State> {
         }))
     }
 
+    onResetVars() {
+        this.setState({
+            watchingVars: []
+        })
+    }
+
     render() {
         const {sideBarSelectedWatcher} = this.state
 
@@ -55,10 +61,8 @@ class MainContainer extends React.Component<{}, State> {
                         <DefinitionsHandler/>
                     </div>
                     <div hidden={!this.state.sideBarSelectedWatcher}>
-                        <WatcherHandler input={this.state.watchingVars}/>   
+                        <WatcherHandler input={this.state.watchingVars} onReset={this.onResetVars.bind(this)}/>   
                     </div>
-
-                    
                     
                 </div>
             </div>

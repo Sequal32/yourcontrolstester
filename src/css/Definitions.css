@@ -2,7 +2,7 @@
     width: 100%;
     height: 100%;
     position: relative;
-    margin: 20px 0 20px 0;
+    margin: 10px 0 10px 0;
 }
 
 .browse-text {
@@ -10,6 +10,15 @@
     margin: 0 10px 0 10px;
     font-size: 1.4vw;
     border: 0;
+}
+
+.browse-div:focus-within {
+    outline: 0px;
+    box-shadow: 0 0 3pt 1.5pt #01BFE6;
+}
+
+.browse-text:focus {
+    outline: none
 }
 
 .right-justified-rectangle {

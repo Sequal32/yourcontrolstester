@@ -1,5 +1,6 @@
 use std::{thread::sleep, time::Duration};
 
+use cmd::Cmd;
 use gaugecommunicator::LVarResult;
 use simconnect::{SimConnector, DispatchResult};
 
@@ -25,14 +26,21 @@ fn main() {
     loop {
 
         match ui.get_next_message() {
-            Some(cmd::Cmd::SetVar {calculator}) => {
+            Some(Cmd::SetVar {calculator}) => {
 
                 gauge_communicator.send_raw(&mut conn, &calculator);
 
             }
-            Some(cmd::Cmd::WatchVar {name, calculator}) => {
+            Some(Cmd::WatchVar {name, calculator}) => {
 
                 gauge_communicator.add_definition_raw(&conn, &calculator, &name);
+
+            }
+            Some(Cmd::ResetVars) => {
+
+                conn.close();
+                conn.connect("YourControls Definitions");
+                gauge_communicator.on_connected(&conn);
 
             }
             None => {}

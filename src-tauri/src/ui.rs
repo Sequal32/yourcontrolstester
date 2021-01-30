@@ -24,9 +24,9 @@ impl Ui {
                         Err(e.to_string())
                     }
                     Ok(command) => {
-                        println!("{:?}", command);
                         match command {
                             Cmd::SetVar {..} | 
+                            Cmd::ResetVars |
                             Cmd::WatchVar {..} => {
                                 app_tx.send(UIEvents::Cmd(command));
                             }

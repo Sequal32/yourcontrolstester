@@ -1,3 +1,12 @@
+.watcher-reset-button {
+    width: 100%;
+    background-color: red;
+}
+
+.watcher-reset-button:hover {
+    background-color: darkred;
+}
+
 .watcher-big-text {
     margin: 0;
     font-size: 1vw;

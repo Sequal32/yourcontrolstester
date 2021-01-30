@@ -13,7 +13,8 @@ export type InputVars = Array<{calculator: string, friendlyName: string}>;
 
 type Props = {
     input: InputVars,
-    hidden?: boolean
+    hidden?: boolean,
+    onReset?: () => void
 }
 
 type State = {
@@ -77,10 +78,23 @@ export default class WatcherHandler extends Component<Props, State> {
         })
     }
 
+    resetVars() {
+        invoke({
+            cmd: "resetVars"
+        })
+
+        if (this.props.onReset) {this.props.onReset()}
+
+        this.setState({
+            values: []
+        })
+    }
+
     render() {
         return (
             <Fragment>
 
+                <button className="form-button rounded shadow watcher-reset-button" onClick={this.resetVars.bind(this)}>Reset Vars</button>
                 <DefinitionSearch/>
 
                 <div className="vertical-list">

@@ -28,6 +28,10 @@
     background-color: #0094b3;
 }
 
+.form-button:focus {
+    outline: none;
+}
+
 .vertical-list {
     position: relative;
     display: flex;
