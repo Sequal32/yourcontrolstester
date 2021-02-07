@@ -1,13 +1,12 @@
+#![cfg_attr(
+    all(not(debug_assertions), target_os = "windows"),
+    windows_subsystem = "windows"
+)]
+
 use std::{thread::sleep, time::Duration};
-
 use cmd::Cmd;
-use gaugecommunicator::{GetResult, LVar, LVarResult};
+use gaugecommunicator::{LVarResult};
 use simconnect::{SimConnector, DispatchResult};
-
-// #![cfg_attr(
-//     all(not(debug_assertions), target_os = "windows"),
-//     windows_subsystem = "windows"
-// )]
 
 mod cmd;
 mod gaugecommunicator;

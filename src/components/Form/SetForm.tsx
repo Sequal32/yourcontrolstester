@@ -80,21 +80,16 @@ class SetForm extends GenericVarForm<SetFormState> {
         const newDefinition = this.props.definitionOverride
 
         if (prevProps.definitionOverride != newDefinition && newDefinition != undefined) {
-            const {event_name, event_param, var_name, var_units, index_reversed, set} = newDefinition
+            const {event_name, event_param, var_name, var_units, index_reversed, set, type} = newDefinition
 
-            if (event_name) {
+            if (event_name || var_name) {
+                const name = event_name ? (event_param && type == "NumSet" ? "K:2:" + event_name : "K:" + event_name) : var_name
 
                 this.setCalculator({
-                    name: event_param ? "K:2:" + event_name : "K:" + event_name,
-                    param: event_param,
+                    name,
+                    units: var_units ?? "",
+                    param: event_param ?? "",
                     indexReversed: index_reversed ?? false
-                })
-
-            } else if (var_name) {
-
-                this.setCalculator({
-                    name: var_name,
-                    units: var_units,
                 })
 
             } else if (set) {
@@ -113,7 +108,7 @@ class SetForm extends GenericVarForm<SetFormState> {
             <div className="form">
                 <FormField id="single" type="text" label="Name" overrideValue={this.state.name ?? ""} onChange={this.nameChange.bind(this)}/>
                 <FormField id="units" type="text" label="Units" overrideValue={this.state.units ?? ""} onChange={this.unitsChange.bind(this)} disabled={this.isKey() || this.isLocal()}/>
-                <FormField id="param" type="text" label="Param" overrideValue={this.state.param ?? ""} onChange={this.paramChange.bind(this)} disabled={this.isAircraft()}/>
+                <FormField id="param" type="text" label="Param" overrideValue={this.state.param ?? ""} onChange={this.paramChange.bind(this)} disabled={!this.isKey()}/>
                 <FormField id="value" type="text" label="Value" overrideValue={this.state.value ?? ""} onChange={this.valueChange.bind(this)}/>
                 <FormField id="calculator" type="text" label="Calculator Code" widthPercent={100} overrideValue={this.state.calculator} onChange={this.calculatorChange.bind(this)}/>
                 <div style={{width: "100%"}}>
@@ -121,7 +116,6 @@ class SetForm extends GenericVarForm<SetFormState> {
                     <label>Index Reversed?</label>
                 </div>
 
-                
                 <button className="form-button rounded shadow" onClick={this.handleSubmit.bind(this)}>Set</button>
             </div>
         )

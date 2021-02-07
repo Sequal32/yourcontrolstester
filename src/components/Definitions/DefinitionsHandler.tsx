@@ -23,7 +23,7 @@ export default class DefinitionsHandler extends Component<Props, State> {
         definitions: []
     }
 
-    search: Fuse<ResultDefinition> = new Fuse([], {threshold: SEARCH_STRING_THRESHOLD, keys: ["definition.var_name", "definition.get"]})
+    search: Fuse<ResultDefinition> = new Fuse([], {threshold: SEARCH_STRING_THRESHOLD, keys: ["definition.var_name", "definition.get", "definition.event_name"]})
     originalDefinitions: Array<ResultDefinition> = []
 
     onBrowseFile(dir: string) {

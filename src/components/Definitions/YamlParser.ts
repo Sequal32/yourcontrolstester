@@ -73,7 +73,7 @@ export default class YamlParser {
     private async parseYaml(yaml: TopLevelYaml): Promise<void> {
         if (yaml.include) {
             for (const index in yaml.include) {
-                await this.parseFile(this.relativePath + "\\" + yaml.include[index])
+                await this.parseFile(this.relativePath + "\\" + yaml.include[index]).catch(reason => console.log(reason))
             }
         }
 
