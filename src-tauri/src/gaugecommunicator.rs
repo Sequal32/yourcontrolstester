@@ -321,7 +321,7 @@ impl GaugeCommunicator {
         }
         // Listen for data written onto the RECEIVE data area
         conn.request_client_data(RECEIVE, 0, RECEIVE, simconnect::SIMCONNECT_CLIENT_DATA_PERIOD_SIMCONNECT_CLIENT_DATA_PERIOD_ON_SET, 0, 0, 0, 0);
-        conn.request_client_data(RECEIVE_MULTIPLE, 0, RECEIVE_MULTIPLE, simconnect::SIMCONNECT_CLIENT_DATA_PERIOD_SIMCONNECT_CLIENT_DATA_PERIOD_ON_SET, simconnect::SIMCONNECT_CLIENT_DATA_REQUEST_FLAG_TAGGED, 0, 0, 0);
+        conn.request_client_data(RECEIVE_MULTIPLE, 0, RECEIVE_MULTIPLE, simconnect::SIMCONNECT_CLIENT_DATA_PERIOD_SIMCONNECT_CLIENT_DATA_PERIOD_ON_SET, simconnect::SIMCONNECT_CLIENT_DATA_REQUEST_FLAG_TAGGED | simconnect::SIMCONNECT_CLIENT_DATA_REQUEST_FLAG_CHANGED, 0, 0, 0);
         // Clear gauge definitions
         self.clear_definitions(conn);
         // Write some data

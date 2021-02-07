@@ -19,8 +19,10 @@ type Props = {
 }
 
 type State = {
-    values: Array<VarData>,
+    values: ValueArray,
 }
+
+type ValueArray = Array<{name: string, value: number}>
 
 type VarData = {
     var_name: string,
@@ -41,7 +43,7 @@ export default class WatcherHandler extends Component<Props, State> {
     ignoredVars = new Set<string>();
 
     currentSearchString: string | undefined = undefined
-    lastReceivedValues: Array<VarData> = []
+    currentValues: Map<string, {value: number, updated: number}> = new Map()
 
     onDeleteCard(varName: string) {
         // TODO: change when gauge is rewritten
@@ -50,10 +52,15 @@ export default class WatcherHandler extends Component<Props, State> {
     }
 
     filterAndSetData() {
-        let filteredData = this.lastReceivedValues.filter(({var_name: varName}) => !this.ignoredVars.has(varName)    )
+        let filteredData: ValueArray = []
+        
+        this.currentValues.forEach(({value}, varName) => {
+            if (this.ignoredVars.has(varName)) {return}
+            filteredData.push({name: varName, value})
+        })
 
         if (this.currentSearchString) {
-            const search = new Fuse(filteredData, {keys: ["var_name"], includeScore: true})
+            const search = new Fuse(filteredData, {keys: ["name"], includeScore: true})
 
             filteredData = search.search(this.currentSearchString)
                 .filter((value) => value.score! <= SEARCH_STRING_THRESHOLD)
@@ -68,7 +75,13 @@ export default class WatcherHandler extends Component<Props, State> {
     componentDidMount() {
         listen("update", (data: Event<Array<VarData>>) => {
 
-            this.lastReceivedValues = data.payload
+            data.payload.forEach(data => {
+                this.currentValues.set(data.var_name, {
+                    value: data.data.floating,
+                    updated: Date.now()
+                })
+            })
+
             this.filterAndSetData()
 
         })
@@ -124,13 +137,16 @@ export default class WatcherHandler extends Component<Props, State> {
 
                 <div className="vertical-list">
                     {
-                        this.state.values.map(({var_name: varName, data}) => 
-                            <WatcherCard 
-                                bigText={varName} 
-                                smallText={data.floating} 
-                                onDelete={this.onDeleteCard.bind(this, varName)}
-                            />
-                        )
+                        this.state.values.map(({name, value}) => {
+                            const recentlyUpdated = Date.now()-(this.currentValues.get(name)?.updated ?? 0) <= 1.0
+
+                            return (<WatcherCard 
+                                bigText={name} 
+                                smallText={value}
+                                smallTextStyle={{color: recentlyUpdated ? "red" : undefined}}
+                                onDelete={this.onDeleteCard.bind(this, name)}
+                            />)
+                        })
                     }
                 </div>
 
