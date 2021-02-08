@@ -55,6 +55,10 @@ fn main() {
                         ui.send_var_data(data);
 
                     }
+
+                    Some(LVarResult::LVarString(data)) => {
+
+                    }
                     _ => {}
                 };
 

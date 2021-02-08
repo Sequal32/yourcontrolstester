@@ -11,7 +11,7 @@ type State = {
     selectedPage: string
 }
 
-const pages = ["Single Test", "Variable Log", "Definition Watcher", "YAML Editor"]
+const pages = ["Single Test", "YourControls Test", "LVar Dumper", "YAML Editor"]
 
 class Navbar extends React.Component<Props, State> {
     state: State = {

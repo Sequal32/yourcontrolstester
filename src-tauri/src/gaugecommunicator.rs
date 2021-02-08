@@ -1,7 +1,7 @@
 use bimap::{self, BiHashMap};
 use serde::{Serialize, Deserialize};
 use simconnect::SimConnector;
-use std::{collections::HashMap, io::{Cursor}};
+use std::{collections::HashMap, ffi::CStr, io::{Cursor}};
 use super::memwriter::MemWriter;
 use {byteorder::{ReadBytesExt, LittleEndian}};
 
@@ -74,7 +74,8 @@ pub struct GaugeCommunicator {
 #[derive(Debug)]
 pub enum LVarResult {
     Single(GetResult),
-    Multi(Vec<GetResult>)
+    Multi(Vec<GetResult>),
+    LVarString(String),
 }
 
 // SEND/RECEIVE define/client data ids
@@ -84,6 +85,7 @@ const SEND_MULTIPLE: u32 = 2;
 const RECEIVE_MULTIPLE: u32 = 3;
 const MAP_INTERPOLATE: u32 = 4;
 const SEND_INTERPOLATE: u32 = 5;
+const DUMP: u32 = 6;
 
 impl GaugeCommunicator {
     pub fn new() -> Self {
@@ -265,6 +267,15 @@ impl GaugeCommunicator {
                     }
 
                     
+                }
+            }
+            DUMP => {
+                unsafe {
+                    return Some(
+                        LVarResult::LVarString(
+                            CStr::from_ptr(&data._base.dwData as *const u32 as *const i8).to_string_lossy().to_string()
+                        )
+                    )
                 }
             }
             _ => None
